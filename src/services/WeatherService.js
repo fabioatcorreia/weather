@@ -36,7 +36,7 @@ export class WeatherService {
    * @param {*} data
    */
   _getForecastFromData(data) {
-    if (!data) {
+    if (!data || !data.query.results) {
       return [];
     }
 
