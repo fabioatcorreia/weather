@@ -13,6 +13,9 @@ module.exports = {
           handler: "cacheFirst",
           options: {
             cacheName: "yahoo-weather",
+            expiration: {
+              maxAgeSeconds: 10
+            },
             cacheableResponse: {
               statuses: [0, 200]
             }
