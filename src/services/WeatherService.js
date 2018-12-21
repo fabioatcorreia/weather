@@ -6,27 +6,30 @@ const WEATHER_API_URL =
 
 export class WeatherService {
   /**
-   *
-   * @param {string} location
+   * Get forecast from the Yahoo API for the given location.
+   * @param {string} location - Location to get the forecast from.
+   * @returns {Promise}
    */
   getForecast(location) {
     return this._getForecastData(location).then(this._getForecastFromData);
   }
 
   /**
-   *
-   * @param {string} text
+   * Builds the url to use for the request to the Yahoo weather API.
+   * @param {string} text - Value to use in the query to the Yahoo API.
+   * @returns {string}
    */
-  buildRequestUrl(text) {
+  _buildRequestUrl(text) {
     return encodeURI(WEATHER_API_URL + WEATHER_API_QUERY.replace("%s", text));
   }
 
   /**
-   *
-   * @param {string} location
+   * Send GET HTTP request for the forecast information from the given location.
+   * @param {string} location - Location to get the forecast from.
+   * @returns {Promise}
    */
   _getForecastData(location) {
-    return fetch(this.buildRequestUrl(location)).then(response => {
+    return fetch(this._buildRequestUrl(location)).then(response => {
       if (response.ok) {
         return response.json();
       }
@@ -35,8 +38,9 @@ export class WeatherService {
   }
 
   /**
-   *
-   * @param {*} data
+   * Get the location and forecast information retrieved by the weather API.
+   * @param {Object} data - Reponse from the Yahoo Weather API.
+   * @returns {{forecastData: Object, locationData?: Object}}
    */
   _getForecastFromData(data) {
     if (!data || !data.query.results) {
