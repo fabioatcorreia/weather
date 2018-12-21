@@ -26,9 +26,12 @@ export class WeatherService {
    * @param {string} location
    */
   _getForecastData(location) {
-    return fetch(this.buildRequestUrl(location)).then(response =>
-      response.json()
-    );
+    return fetch(this.buildRequestUrl(location)).then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("Network response was not ok.");
+    });
   }
 
   /**
@@ -37,9 +40,14 @@ export class WeatherService {
    */
   _getForecastFromData(data) {
     if (!data || !data.query.results) {
-      return [];
+      return { forecastData: [] };
     }
 
-    return data.query.results.channel.item.forecast;
+    const response = data.query.results.channel;
+
+    return {
+      forecastData: response.item.forecast,
+      locationData: response.location
+    };
   }
 }

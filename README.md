@@ -11,6 +11,11 @@ npm install
 npm start
 ```
 
+### Compiles and runs production build
+```
+npm run server:prod
+```
+
 ### Compiles and minifies for production
 ```
 npm run build

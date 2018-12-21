@@ -4,11 +4,15 @@
       <h1>Weather Forecast</h1>
     </header>
     <LocationInput @input="onInput"/>
+    <section v-if="!isLoading && !hasError">
+      <h2 v-show="location.city">{{location.city + ', ' + location.country}}</h2>
+      <div class="forecast-container">
+        <Forecast :data="item" v-for="item in forecast" :key="item.date"/>
+      </div>
+    </section>
     <div class="loader" v-show="isLoading">Loading...</div>
-    <div v-if="!isLoading" class="forecast-container">
-      <Forecast :data="item" v-for="item in forecast" :key="item.date"/>
-    </div>
-    <p v-show="!forecast.length">Please enter a location to get its weather forecast.</p>
+    <p v-show="!forecast.length && !hasError">Please enter a valid location to get its weather forecast.</p>
+    <p v-show="hasError">There was an error with your request.</p>
   </main>
 </template>
 
@@ -28,7 +32,9 @@ export default {
   data() {
     return {
       isLoading: true,
+      hasError: false,
       forecast: [],
+      location: {},
       weatherService: new WeatherService()
     };
   },
@@ -38,14 +44,34 @@ export default {
   },
 
   methods: {
-    async getForecast(location = "Porto") {
+    async getForecast(location) {
+      this.hasError = false;
+
       if (!location) {
-        this.forecast = [];
+        this.reset();
         return;
       }
 
       this.isLoading = true;
-      this.forecast = await this.weatherService.getForecast(location);
+      try {
+        const {
+          forecastData,
+          locationData
+        } = await this.weatherService.getForecast(location);
+
+        if (forecastData.length > 0) {
+          this.forecast = forecastData.slice(0, 5);
+          this.location = locationData;
+        }
+      } catch (error) {
+        this.hasError = true;
+      }
+      this.isLoading = false;
+    },
+
+    reset() {
+      this.forecast = [];
+      this.location = {};
       this.isLoading = false;
     },
 

@@ -22,11 +22,11 @@ export default {
   padding: 16px;
   margin: 16px;
   background: #fff;
-  border: 1px solid #aaa;
+  border: 1px solid #999;
   border-radius: 5px;
 }
 
 .minimum-temperature {
-  color: #aaa;
+  color: darkblue;
 }
 </style>
